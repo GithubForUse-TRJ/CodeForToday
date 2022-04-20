@@ -1,0 +1,67 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+df=pd.read_csv('Social_Network_Ads.csv')
+df
+df['Gender']=df['Gender'].str.replace(r"Male","1")
+df['Gender']=df['Gender'].str.replace(r"Female","0")
+df.head(20)
+x=df[['Gender','Age','EstimatedSalary']]
+y=df['Purchased']
+from sklearn.model_selection import train_test_split
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.2,random_state=17)
+from sklearn.svm import SVC
+from sklearn.metrics import confusion_matrix,classification_report
+support=SVC(kernel='linear')
+support.fit(x_train,y_train)
+y_pred_linear=support.predict(x_test)
+y_pred_linear=support.predict(x_test)
+cv_svm_linear=confusion_matrix(y_test,y_pred_linear)
+cr_svm_linear=classification_report(y_test,y_pred_linear)
+print(cv_svm_linear)
+print(cr_svm_linear)
+support=SVC(kernel='rbf')
+support.fit(x_train,y_train)
+y_pred_rbf=support.predict(x_test)
+cv_svm_rbf=confusion_matrix(y_test,y_pred_rbf)
+cr_svm_rbf=classification_report(y_test,y_pred_rbf)
+print(cv_svm_rbf)
+print(cr_svm_rbf)
+support=SVC(kernel='sigmoid')
+support.fit(x_train,y_train)
+y_pred_sigmoid=support.predict(x_test)
+cv_svm_sigmoid=confusion_matrix(y_test,y_pred_sigmoid)
+cr_svm_sigmoid=classification_report(y_test,y_pred_sigmoid)
+
+print(cv_svm_sigmoid)
+print(cr_svm_sigmoid)
+
+support=SVC(kernel='poly')
+support.fit(x_train,y_train)
+y_pred_poly=support.predict(x_test)
+cv_svm_poly=confusion_matrix(y_test,y_pred_poly)
+cr_svm_poly=classification_report(y_test,y_pred_poly)
+print(cv_svm_poly)
+print(cr_svm_poly)
+
+
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import metrics
+for n in range(2,20):
+  knn=KNeighborsClassifier(n_neighbors=n)
+  knn.fit(x_train,y_train)
+y_pred_knn=knn.predict(x_test)
+print('Accuracy for n=',n," is ",metrics.accuracy_score(y_test,y_pred_knn))
+from sklearn.preprocessing import StandardScaler
+sc=StandardScaler()
+x_train=sc.fit_transform(x_train)
+x_test=sc.fit_transform(x_test)
+from sklearn.naive_bayes import GaussianNB
+classifier=GaussianNB()
+classifier.fit(x_train,y_train)
+y_pred_gauss=classifier.predict(x_test)
+print(confusion_matrix(y_test,y_pred_gauss))
+print(classification_report(y_test,y_pred_gauss))
+
+plt.plot(y_test,y_pred_linear,'r-')
+plt.plot(y_test,y_pred_gauss,'b.')
+plt.plot(y_test,y_pred_knn,'g+')
